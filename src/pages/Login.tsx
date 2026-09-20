@@ -1,9 +1,11 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, type Location } from 'react-router-dom'
 import { ApiRequestError } from '../api'
 import { useAuth } from '../auth'
 
 const EMAIL_PATTERN = /^\S+@\S+\.\S+$/
+
+type LocationState = { from?: Location }
 
 function Login() {
   const [email, setEmail] = useState('')
@@ -12,6 +14,8 @@ function Login() {
   const [submitting, setSubmitting] = useState(false)
   const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = (location.state as LocationState | null)?.from?.pathname ?? '/'
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -29,7 +33,7 @@ function Login() {
     setSubmitting(true)
     try {
       await login(email, password)
-      navigate('/')
+      navigate(from, { replace: true })
     } catch (err) {
       setError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
     } finally {

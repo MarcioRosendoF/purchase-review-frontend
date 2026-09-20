@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth'
+import RequireAuth from './components/RequireAuth'
 import Login from './pages/Login'
 
 function Home() {
@@ -17,7 +18,9 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Home />} />
+          <Route element={<RequireAuth />}>
+            <Route path="/" element={<Home />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
