@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { useLocation, useNavigate, type Location } from 'react-router-dom'
+import { Link, useLocation, useNavigate, type Location } from 'react-router-dom'
 import { ApiRequestError } from '../api'
 import { useAuth } from '../auth'
 
@@ -77,6 +77,13 @@ function Login() {
           {submitting ? 'Signing in...' : 'Sign in'}
         </button>
       </form>
+
+      <p className="mt-4 text-sm text-gray-600">
+        Don&apos;t have an account?{' '}
+        <Link to="/register" className="text-blue-600 hover:underline">
+          Sign up
+        </Link>
+      </p>
     </main>
   )
 }
