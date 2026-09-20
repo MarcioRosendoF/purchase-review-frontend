@@ -57,6 +57,12 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
     } catch {
       body = null
     }
+
+    if (response.status === 403 && body === null) {
+      localStorage.removeItem(AUTH_STORAGE_KEY)
+      window.location.replace('/login')
+    }
+
     throw new ApiRequestError(response.status, body?.message ?? fallbackMessage(response.status))
   }
 
