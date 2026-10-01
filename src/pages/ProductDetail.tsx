@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ApiRequestError, getProduct, listReviews } from '../api'
+import { ApiRequestError, createOrder, getProduct, listReviews } from '../api'
 import ReviewList from '../components/ReviewList'
 import type { Product, Review } from '../types'
 
@@ -12,6 +12,9 @@ function ProductDetail() {
   const [reviews, setReviews] = useState<Review[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [buying, setBuying] = useState(false)
+  const [orderMessage, setOrderMessage] = useState('')
+  const [orderError, setOrderError] = useState('')
 
   useEffect(() => {
     if (!id) {
@@ -23,6 +26,8 @@ function ProductDetail() {
     async function load() {
       setLoading(true)
       setError('')
+      setOrderMessage('')
+      setOrderError('')
 
       try {
         const [productResponse, reviewsResponse] = await Promise.all([
@@ -40,6 +45,25 @@ function ProductDetail() {
 
     load()
   }, [id])
+
+  async function handleBuy() {
+    if (!product) {
+      return
+    }
+
+    setBuying(true)
+    setOrderMessage('')
+    setOrderError('')
+
+    try {
+      await createOrder(product.id)
+      setOrderMessage('Order placed — you can review it now.')
+    } catch (err) {
+      setOrderError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
+    } finally {
+      setBuying(false)
+    }
+  }
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-10">
@@ -61,6 +85,19 @@ function ProductDetail() {
                 : `${product.averageRating.toFixed(1)} (${product.reviewCount} ${product.reviewCount === 1 ? 'review' : 'reviews'})`}
             </span>
           </div>
+
+          <button
+            type="button"
+            onClick={handleBuy}
+            disabled={buying}
+            className="mt-4 rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          >
+            {buying ? 'Placing order...' : 'Buy'}
+          </button>
+
+          {orderMessage && <p className="mt-2 text-sm text-blue-600">{orderMessage}</p>}
+
+          {orderError && <p className="mt-2 text-sm text-red-600">{orderError}</p>}
 
           <h2 className="mt-8 font-semibold text-gray-900">Reviews</h2>
           <ReviewList reviews={reviews} />
