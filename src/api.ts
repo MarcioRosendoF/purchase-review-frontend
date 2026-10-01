@@ -8,6 +8,7 @@ import {
 } from './types'
 
 export const AUTH_STORAGE_KEY = 'auth'
+const API_BASE = '/api'
 
 export class ApiRequestError extends Error {
   status: number
@@ -45,7 +46,7 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
 
   let response: Response
   try {
-    response = await fetch(path, { ...options, headers })
+    response = await fetch(`${API_BASE}${path}`, { ...options, headers })
   } catch {
     throw new ApiRequestError(0, 'Could not reach the API')
   }

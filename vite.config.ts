@@ -6,10 +6,10 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     proxy: {
-      '/auth': 'http://localhost:8080',
-      '/products': 'http://localhost:8080',
-      '/orders': 'http://localhost:8080',
-      '/reviews': 'http://localhost:8080',
+      '/api': {
+        target: 'http://localhost:8080',
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
     },
   },
 })
