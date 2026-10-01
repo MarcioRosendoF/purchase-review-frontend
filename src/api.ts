@@ -91,6 +91,10 @@ export function getProduct(id: string): Promise<Product> {
   return request<Product>(`/products/${id}`)
 }
 
+export function listReviews(productId: string, page: number): Promise<Page<Review>> {
+  return request<Page<Review>>(`/reviews/product/${productId}?page=${page}`)
+}
+
 export function createOrder(productId: string): Promise<Order> {
   return request<Order>('/orders', {
     method: 'POST',
