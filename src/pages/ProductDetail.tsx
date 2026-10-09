@@ -22,7 +22,7 @@ function ProductDetail({ productId }: { productId: string }) {
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState('')
   const [submittingReview, setSubmittingReview] = useState(false)
-  const [reviewMessage, setReviewMessage] = useState('')
+  const [reviewSubmitted, setReviewSubmitted] = useState(false)
   const [reviewError, setReviewError] = useState('')
 
   useEffect(() => {
@@ -91,13 +91,10 @@ function ProductDetail({ productId }: { productId: string }) {
 
     setSubmittingReview(true)
     setReviewError('')
-    setReviewMessage('')
 
     try {
       await createReview(product.id, rating, comment.trim())
-      setRating(0)
-      setComment('')
-      setReviewMessage('Review submitted.')
+      setReviewSubmitted(true)
       setReviewsPage(0)
       setReloadKey((current) => current + 1)
     } catch (err) {
@@ -164,38 +161,40 @@ function ProductDetail({ productId }: { productId: string }) {
 
           <h2 className="mt-8 font-semibold text-gray-900">Write a review</h2>
 
-          <form onSubmit={handleReviewSubmit} className="mt-3 flex flex-col gap-3">
-            <div className="flex flex-col gap-1 text-sm font-medium">
-              Rating
-              <RatingInput value={rating} onChange={setRating} />
-            </div>
+          {reviewSubmitted ? (
+            <p className="mt-3 text-sm text-gray-600">Thanks — your review is listed above.</p>
+          ) : (
+            <form onSubmit={handleReviewSubmit} className="mt-3 flex flex-col gap-3">
+              <div className="flex flex-col gap-1 text-sm font-medium">
+                Rating
+                <RatingInput value={rating} onChange={setRating} />
+              </div>
 
-            <label className="flex flex-col gap-1 text-sm font-medium">
-              Comment (optional)
-              <textarea
-                value={comment}
-                onChange={(event) => setComment(event.target.value)}
-                rows={3}
-                className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-600 focus:outline-none"
-              />
-            </label>
+              <label className="flex flex-col gap-1 text-sm font-medium">
+                Comment (optional)
+                <textarea
+                  value={comment}
+                  onChange={(event) => setComment(event.target.value)}
+                  rows={3}
+                  className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+                />
+              </label>
 
-            {reviewError && (
-              <p role="alert" className="text-sm text-red-600">
-                {reviewError}
-              </p>
-            )}
+              {reviewError && (
+                <p role="alert" className="text-sm text-red-600">
+                  {reviewError}
+                </p>
+              )}
 
-            {reviewMessage && <p className="text-sm text-blue-600">{reviewMessage}</p>}
-
-            <button
-              type="submit"
-              disabled={submittingReview}
-              className="self-start rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
-            >
-              {submittingReview ? 'Submitting...' : 'Submit review'}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={submittingReview}
+                className="self-start rounded bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {submittingReview ? 'Submitting...' : 'Submit review'}
+              </button>
+            </form>
+          )}
         </>
       )}
     </main>
