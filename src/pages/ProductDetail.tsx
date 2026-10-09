@@ -3,13 +3,14 @@ import { useParams } from 'react-router-dom'
 import { ApiRequestError, createOrder, createReview, getProduct, listReviews } from '../api'
 import RatingInput from '../components/RatingInput'
 import ReviewList from '../components/ReviewList'
-import type { Product, Review } from '../types'
+import type { Page, Product, Review } from '../types'
 
 const priceFormatter = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
 
 function ProductDetail({ productId }: { productId: string }) {
   const [product, setProduct] = useState<Product | null>(null)
-  const [reviews, setReviews] = useState<Review[]>([])
+  const [reviews, setReviews] = useState<Page<Review> | null>(null)
+  const [reviewsPage, setReviewsPage] = useState(0)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
@@ -29,10 +30,10 @@ function ProductDetail({ productId }: { productId: string }) {
       try {
         const [productResponse, reviewsResponse] = await Promise.all([
           getProduct(productId),
-          listReviews(productId, 0),
+          listReviews(productId, reviewsPage),
         ])
         setProduct(productResponse)
-        setReviews(reviewsResponse.content)
+        setReviews(reviewsResponse)
       } catch (err) {
         setError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
       } finally {
@@ -41,7 +42,7 @@ function ProductDetail({ productId }: { productId: string }) {
     }
 
     load()
-  }, [productId, reloadKey])
+  }, [productId, reloadKey, reviewsPage])
 
   async function handleBuy() {
     if (!product) {
@@ -83,6 +84,7 @@ function ProductDetail({ productId }: { productId: string }) {
       setRating(0)
       setComment('')
       setReviewMessage('Review submitted.')
+      setReviewsPage(0)
       setReloadKey((current) => current + 1)
     } catch (err) {
       setReviewError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
@@ -97,7 +99,7 @@ function ProductDetail({ productId }: { productId: string }) {
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      {!loading && !error && product && (
+      {!loading && !error && product && reviews && (
         <>
           <h1 className="text-2xl font-semibold text-blue-600">{product.name}</h1>
 
@@ -126,7 +128,28 @@ function ProductDetail({ productId }: { productId: string }) {
           {orderError && <p className="mt-2 text-sm text-red-600">{orderError}</p>}
 
           <h2 className="mt-8 font-semibold text-gray-900">Reviews</h2>
-          <ReviewList reviews={reviews} />
+          <ReviewList reviews={reviews.content} />
+
+          {reviews.content.length > 0 && (
+            <div className="mt-4 flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => setReviewsPage((current) => current - 1)}
+                disabled={reviews.first}
+                className="rounded border border-gray-300 px-3 py-1 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                onClick={() => setReviewsPage((current) => current + 1)}
+                disabled={reviews.last}
+                className="rounded border border-gray-300 px-3 py-1 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 focus:ring-2 focus:ring-blue-600 focus:outline-none"
+              >
+                Next
+              </button>
+            </div>
+          )}
 
           <h2 className="mt-8 font-semibold text-gray-900">Write a review</h2>
 
