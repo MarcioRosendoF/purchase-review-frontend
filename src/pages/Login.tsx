@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useLocation, useNavigate, type Location } from 'react-router-dom'
 import { ApiRequestError } from '../api'
 import { useAuth } from '../auth'
@@ -16,6 +16,10 @@ function Login() {
   const navigate = useNavigate()
   const location = useLocation()
   const from = (location.state as LocationState | null)?.from?.pathname ?? '/'
+
+  useEffect(() => {
+    document.title = 'Sign in — Purchase Review'
+  }, [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

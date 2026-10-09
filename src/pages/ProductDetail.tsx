@@ -40,6 +40,7 @@ function ProductDetail({ productId }: { productId: string }) {
         if (ignore) return
         setProduct(productResponse)
         setReviews(reviewsResponse)
+        document.title = `${productResponse.name} — Purchase Review`
       } catch (err) {
         if (ignore) return
         setError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')

@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { useEffect, useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ApiRequestError } from '../api'
 import { useAuth } from '../auth'
@@ -14,6 +14,10 @@ function Register() {
   const [submitting, setSubmitting] = useState(false)
   const { register } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    document.title = 'Create account — Purchase Review'
+  }, [])
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()

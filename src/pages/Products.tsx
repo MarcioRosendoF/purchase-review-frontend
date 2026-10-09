@@ -12,6 +12,7 @@ function Products() {
 
   useEffect(() => {
     let ignore = false
+    document.title = 'Products — Purchase Review'
 
     async function load() {
       setLoading(true)

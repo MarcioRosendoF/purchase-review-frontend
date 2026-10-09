@@ -1,9 +1,10 @@
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AuthProvider } from './auth'
 import ErrorBoundary from './components/ErrorBoundary'
 import RequireAuth from './components/RequireAuth'
 import Login from './pages/Login'
 import MyOrders from './pages/MyOrders'
+import NotFound from './pages/NotFound'
 import ProductDetail from './pages/ProductDetail'
 import Products from './pages/Products'
 import Register from './pages/Register'
@@ -21,17 +22,7 @@ function App() {
               <Route path="/products/:id" element={<ProductDetail />} />
               <Route path="/orders/my" element={<MyOrders />} />
             </Route>
-            <Route
-              path="*"
-              element={
-                <main className="mx-auto max-w-2xl px-4 py-10">
-                  <h1 className="text-2xl font-semibold text-blue-600">Page not found</h1>
-                  <Link to="/" className="mt-2 inline-block text-sm text-blue-600 hover:underline">
-                    Back to products
-                  </Link>
-                </main>
-              }
-            />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </ErrorBoundary>
       </AuthProvider>
