@@ -1,6 +1,7 @@
 import { useEffect, useState, type FormEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import { ApiRequestError, createOrder, createReview, getProduct, listReviews } from '../api'
+import Pagination from '../components/Pagination'
 import RatingInput from '../components/RatingInput'
 import ReviewList from '../components/ReviewList'
 import type { Page, Product, Review } from '../types'
@@ -131,24 +132,12 @@ function ProductDetail({ productId }: { productId: string }) {
           <ReviewList reviews={reviews.content} />
 
           {reviews.content.length > 0 && (
-            <div className="mt-4 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => setReviewsPage((current) => current - 1)}
-                disabled={reviews.first}
-                className="rounded border border-gray-300 px-3 py-1 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 focus:ring-2 focus:ring-blue-600 focus:outline-none"
-              >
-                Previous
-              </button>
-              <button
-                type="button"
-                onClick={() => setReviewsPage((current) => current + 1)}
-                disabled={reviews.last}
-                className="rounded border border-gray-300 px-3 py-1 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 focus:ring-2 focus:ring-blue-600 focus:outline-none"
-              >
-                Next
-              </button>
-            </div>
+            <Pagination
+              page={reviewsPage}
+              first={reviews.first}
+              last={reviews.last}
+              onChange={setReviewsPage}
+            />
           )}
 
           <h2 className="mt-8 font-semibold text-gray-900">Write a review</h2>

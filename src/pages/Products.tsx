@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { ApiRequestError, listProducts } from '../api'
+import Pagination from '../components/Pagination'
 import ProductCard from '../components/ProductCard'
 import type { Page, Product } from '../types'
 
@@ -47,24 +48,7 @@ function Products() {
             </div>
           )}
 
-          <div className="mt-6 flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => setPage((current) => current - 1)}
-              disabled={data.first}
-              className="rounded border border-gray-300 px-3 py-1 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 focus:ring-2 focus:ring-blue-600 focus:outline-none"
-            >
-              Previous
-            </button>
-            <button
-              type="button"
-              onClick={() => setPage((current) => current + 1)}
-              disabled={data.last}
-              className="rounded border border-gray-300 px-3 py-1 text-sm font-medium hover:bg-gray-100 disabled:opacity-50 focus:ring-2 focus:ring-blue-600 focus:outline-none"
-            >
-              Next
-            </button>
-          </div>
+          <Pagination page={page} first={data.first} last={data.last} onChange={setPage} />
         </>
       )}
     </main>
