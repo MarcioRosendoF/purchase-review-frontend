@@ -10,21 +10,29 @@ function MyOrders() {
   const [error, setError] = useState('')
 
   useEffect(() => {
+    let ignore = false
+
     async function load() {
       setLoading(true)
       setError('')
 
       try {
         const result = await listMyOrders(page)
+        if (ignore) return
         setData(result)
       } catch (err) {
+        if (ignore) return
         setError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
       } finally {
-        setLoading(false)
+        if (!ignore) setLoading(false)
       }
     }
 
     load()
+
+    return () => {
+      ignore = true
+    }
   }, [page])
 
   return (

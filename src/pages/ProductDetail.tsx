@@ -12,6 +12,7 @@ function ProductDetail({ productId }: { productId: string }) {
   const [product, setProduct] = useState<Product | null>(null)
   const [reviews, setReviews] = useState<Page<Review> | null>(null)
   const [reviewsPage, setReviewsPage] = useState(0)
+  const [reviewsLoading, setReviewsLoading] = useState(false)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
@@ -25,24 +26,36 @@ function ProductDetail({ productId }: { productId: string }) {
   const [reviewError, setReviewError] = useState('')
 
   useEffect(() => {
+    let ignore = false
+
     async function load() {
       setError('')
+      setReviewsLoading(true)
 
       try {
         const [productResponse, reviewsResponse] = await Promise.all([
           getProduct(productId),
           listReviews(productId, reviewsPage),
         ])
+        if (ignore) return
         setProduct(productResponse)
         setReviews(reviewsResponse)
       } catch (err) {
+        if (ignore) return
         setError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
       } finally {
-        setLoading(false)
+        if (!ignore) {
+          setReviewsLoading(false)
+          setLoading(false)
+        }
       }
     }
 
     load()
+
+    return () => {
+      ignore = true
+    }
   }, [productId, reloadKey, reviewsPage])
 
   async function handleBuy() {
@@ -136,6 +149,7 @@ function ProductDetail({ productId }: { productId: string }) {
               page={reviewsPage}
               first={reviews.first}
               last={reviews.last}
+              disabled={reviewsLoading}
               onChange={setReviewsPage}
             />
           )}
