@@ -51,6 +51,7 @@ function Login() {
           Email
           <input
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-600 focus:outline-none"
@@ -61,13 +62,18 @@ function Login() {
           Password
           <input
             type="password"
+            autoComplete="current-password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             className="rounded border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-600 focus:outline-none"
           />
         </label>
 
-        {error && <p className="text-sm text-red-600">{error}</p>}
+        {error && (
+          <p role="alert" className="text-sm text-red-600">
+            {error}
+          </p>
+        )}
 
         <button
           type="submit"

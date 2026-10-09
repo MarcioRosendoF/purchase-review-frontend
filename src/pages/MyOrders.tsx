@@ -41,7 +41,11 @@ function MyOrders() {
 
       {loading && <p className="mt-6 text-sm text-gray-600">Loading orders...</p>}
 
-      {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+      {error && (
+        <p role="alert" className="mt-4 text-sm text-red-600">
+          {error}
+        </p>
+      )}
 
       {!loading && !error && data && (
         <>

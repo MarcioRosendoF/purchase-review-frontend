@@ -111,7 +111,11 @@ function ProductDetail({ productId }: { productId: string }) {
     <main className="mx-auto max-w-2xl px-4 py-10">
       {loading && <p className="text-sm text-gray-600">Loading product...</p>}
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p role="alert" className="text-sm text-red-600">
+          {error}
+        </p>
+      )}
 
       {!loading && !error && product && reviews && (
         <>
@@ -139,7 +143,11 @@ function ProductDetail({ productId }: { productId: string }) {
 
           {orderMessage && <p className="mt-2 text-sm text-blue-600">{orderMessage}</p>}
 
-          {orderError && <p className="mt-2 text-sm text-red-600">{orderError}</p>}
+          {orderError && (
+            <p role="alert" className="mt-2 text-sm text-red-600">
+              {orderError}
+            </p>
+          )}
 
           <h2 className="mt-8 font-semibold text-gray-900">Reviews</h2>
           <ReviewList reviews={reviews.content} />
@@ -172,7 +180,11 @@ function ProductDetail({ productId }: { productId: string }) {
               />
             </label>
 
-            {reviewError && <p className="text-sm text-red-600">{reviewError}</p>}
+            {reviewError && (
+              <p role="alert" className="text-sm text-red-600">
+                {reviewError}
+              </p>
+            )}
 
             {reviewMessage && <p className="text-sm text-blue-600">{reviewMessage}</p>}
 
