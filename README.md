@@ -37,6 +37,7 @@ Interface web em React + TypeScript para a [Purchase Verified Review API](https:
 - Tailwind CSS 4
 - React Router 7
 - oxlint
+- GitHub Actions (CI: `npm ci` + lint + build em push e pull request)
 - `fetch` nativo, sem axios
 
 ### Como rodar
@@ -74,7 +75,6 @@ Textos de interface em inglês, porque é decisão de código. Mensagens de erro
 - Não dá para editar nem excluir review — o backend não tem esses endpoints
 - Sem UI de admin: criar e remover produtos sai pelo Swagger do backend
 - Paginação só com Anterior/Próxima (a API usa `size=10`, ordenado por `createdAt` DESC)
-- Rota desconhecida cai em tela em branco: não existe `path="*"`
 - A navegação vive na NavBar; o nome do app não é clicável e o detalhe não tem link de volta
 - Sem deploy: o backend depende de um Postgres local via docker-compose
 - Sem testes automatizados no repositório
@@ -106,6 +106,7 @@ This is my second hands-on React project, and the step up here is TypeScript and
 - Tailwind CSS 4
 - React Router 7
 - oxlint
+- GitHub Actions (CI: `npm ci` + lint + build on push and pull request)
 - Native `fetch`, no axios
 
 ### How to run
@@ -143,7 +144,6 @@ User interface text is in English, as a code decision. Backend error messages ar
 - Reviews cannot be edited or deleted — the backend has no such endpoints
 - No admin UI: creating and deleting products goes through the backend Swagger
 - Pagination is Previous/Next only (the API uses `size=10`, sorted by `createdAt` DESC)
-- An unknown route renders a blank screen: there is no `path="*"`
 - Navigation lives in the NavBar; the app name is not clickable and the detail page has no back link
 - No deploy: the backend depends on a local Postgres through docker-compose
 - No automated tests in the repository
