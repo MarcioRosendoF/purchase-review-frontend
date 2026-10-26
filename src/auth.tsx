@@ -12,14 +12,33 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null)
 
+function isAuthResponse(value: unknown): value is AuthResponse {
+  if (typeof value !== 'object' || value === null) return false
+  const candidate = value as Record<string, unknown>
+  return (
+    typeof candidate.token === 'string' &&
+    candidate.token.length > 0 &&
+    typeof candidate.userId === 'string' &&
+    typeof candidate.email === 'string' &&
+    typeof candidate.role === 'string'
+  )
+}
+
 function readStoredUser(): AuthResponse | null {
   const raw = localStorage.getItem(AUTH_STORAGE_KEY)
   if (!raw) return null
+
+  let parsed: unknown = null
   try {
-    return JSON.parse(raw) as AuthResponse
+    parsed = JSON.parse(raw)
   } catch {
-    return null
+    parsed = null
   }
+
+  if (isAuthResponse(parsed)) return parsed
+
+  localStorage.removeItem(AUTH_STORAGE_KEY)
+  return null
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
