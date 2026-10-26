@@ -14,7 +14,8 @@ function ProductDetail({ productId }: { productId: string }) {
   const [reviewsPage, setReviewsPage] = useState(0)
   const [reviewsLoading, setReviewsLoading] = useState(false)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
+  const [productError, setProductError] = useState('')
+  const [reviewsError, setReviewsError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
   const [buying, setBuying] = useState(false)
   const [orderMessage, setOrderMessage] = useState('')
@@ -29,26 +30,18 @@ function ProductDetail({ productId }: { productId: string }) {
     let ignore = false
 
     async function load() {
-      setError('')
-      setReviewsLoading(true)
+      setProductError('')
 
       try {
-        const [productResponse, reviewsResponse] = await Promise.all([
-          getProduct(productId),
-          listReviews(productId, reviewsPage),
-        ])
+        const productResponse = await getProduct(productId)
         if (ignore) return
         setProduct(productResponse)
-        setReviews(reviewsResponse)
         document.title = `${productResponse.name} — Purchase Review`
       } catch (err) {
         if (ignore) return
-        setError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
+        setProductError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
       } finally {
-        if (!ignore) {
-          setReviewsLoading(false)
-          setLoading(false)
-        }
+        if (!ignore) setLoading(false)
       }
     }
 
@@ -57,7 +50,33 @@ function ProductDetail({ productId }: { productId: string }) {
     return () => {
       ignore = true
     }
-  }, [productId, reloadKey, reviewsPage])
+  }, [productId, reloadKey])
+
+  useEffect(() => {
+    let ignore = false
+
+    async function load() {
+      setReviewsError('')
+      setReviewsLoading(true)
+
+      try {
+        const reviewsResponse = await listReviews(productId, reviewsPage)
+        if (ignore) return
+        setReviews(reviewsResponse)
+      } catch (err) {
+        if (ignore) return
+        setReviewsError(err instanceof ApiRequestError ? err.message : 'Could not reach the API')
+      } finally {
+        if (!ignore) setReviewsLoading(false)
+      }
+    }
+
+    load()
+
+    return () => {
+      ignore = true
+    }
+  }, [productId, reviewsPage, reloadKey])
 
   async function handleBuy() {
     if (!product) {
@@ -109,13 +128,13 @@ function ProductDetail({ productId }: { productId: string }) {
     <main className="mx-auto max-w-2xl px-4 py-10">
       {loading && <p className="text-sm text-gray-600">Loading product...</p>}
 
-      {error && (
+      {productError && (
         <p role="alert" className="text-sm text-red-600">
-          {error}
+          {productError}
         </p>
       )}
 
-      {!loading && !error && product && reviews && (
+      {!loading && !productError && product && (
         <>
           <h1 className="text-2xl font-semibold text-blue-600">{product.name}</h1>
 
@@ -148,16 +167,27 @@ function ProductDetail({ productId }: { productId: string }) {
           )}
 
           <h2 className="mt-8 font-semibold text-gray-900">Reviews</h2>
-          <ReviewList reviews={reviews.content} />
 
-          {reviews.content.length > 0 && (
-            <Pagination
-              page={reviewsPage}
-              first={reviews.first}
-              last={reviews.last}
-              disabled={reviewsLoading}
-              onChange={setReviewsPage}
-            />
+          {reviewsError && (
+            <p role="alert" className="mt-3 text-sm text-red-600">
+              {reviewsError}
+            </p>
+          )}
+
+          {!reviewsError && reviews && (
+            <>
+              <ReviewList reviews={reviews.content} />
+
+              {reviews.content.length > 0 && (
+                <Pagination
+                  page={reviewsPage}
+                  first={reviews.first}
+                  last={reviews.last}
+                  disabled={reviewsLoading}
+                  onChange={setReviewsPage}
+                />
+              )}
+            </>
           )}
 
           <h2 className="mt-8 font-semibold text-gray-900">Write a review</h2>
